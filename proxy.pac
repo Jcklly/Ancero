@@ -15,8 +15,25 @@ function FindProxyForURL(url, host) {
     return "SOCKS5 127.0.0.1:1080";
   }
 
+  if (dnsDomainIs(host, "zillow.com") || dnsDomainIs(host, "www.zillow.com")) {
+    return "SOCKS5 127.0.0.1:1080";
+  }
+
+  if (dnsDomainIs(host, "realtor.com") || dnsDomainIs(host, "www.realtor.com")) {
+    return "SOCKS5 127.0.0.1:1080";
+  }
+
+  if (dnsDomainIs(host, "bizjournals.com") || dnsDomainIs(host, "www.bizjournals.com")) {
+    return "SOCKS5 127.0.0.1:1080";
+  }
+
+  if (dnsDomainIs(host, "njcourts.gov") || dnsDomainIs(host, "www.njcourts.gov")) {
+    return "SOCKS5 127.0.0.1:1080";
+  }
+
   return "DIRECT";
 
 }
+
 
 
