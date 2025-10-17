@@ -6,10 +6,11 @@ function FindProxyForURL(url, host) {
     return "SOCKS5 127.0.0.1:1080";
   }
 
-  // Force whatismyipaddress direct
-  if (dnsDomainIs(host, "whatismyipaddress.com") || dnsDomainIs(host, "www.whatismyipaddress.com")) {
-    return "DIRECT";
+  // if URL contains our magic flag, force proxy regardless of host
+  if (shExpMatch(url, "*__via_proxy__=*")) {
+    return "SOCKS5 127.0.0.1:1080";
   }
 
   return "DIRECT";
+
 }
