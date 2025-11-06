@@ -31,9 +31,14 @@ function FindProxyForURL(url, host) {
     return "SOCKS5 127.0.0.1:1080";
   }
 
+  if (dnsDomainIs(host, "tylermecca.foxroach.com") || dnsDomainIs(host, "www.tylermecca.foxroach.com")) {
+    return "SOCKS5 127.0.0.1:1080";
+  }
+
   return "DIRECT";
 
 }
+
 
 
 
