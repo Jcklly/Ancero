@@ -34,6 +34,10 @@ function FindProxyForURL(url, host) {
     return "SOCKS5 127.0.0.1:1080; DIRECT";
   }
 
+  if (dnsDomainIs(host, "cloudflare.com") || shExpMatch(host, "*.cloudflare.com")) {
+    return "SOCKS5 127.0.0.1:1080; DIRECT";
+  }
+
   // ---- Cloudflare detection helper (official IPv4 ranges) ----
   function isCloudflareIP(h) {
     if (!isResolvable(h)) return false;
@@ -65,3 +69,4 @@ function FindProxyForURL(url, host) {
   // ---- Default: everything else direct ----
   return "DIRECT";
 }
+
