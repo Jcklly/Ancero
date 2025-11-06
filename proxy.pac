@@ -41,6 +41,11 @@ function FindProxyForURL(url, host) {
     return "SOCKS5 127.0.0.1:1080";
   }
 
+  // Route zillow via proxy
+  if (dnsDomainIs(host, "cloudflare.com") || dnsDomainIs(host, "www.cloudflare.com")) {
+    return "SOCKS5 127.0.0.1:1080";
+  }
+
   // Bypass proxy for Cloudflare-backed content (avoids captchas and 1020 errors)
   if (isResolvable(host) &&
       (isInNet(dnsResolve(host), "104.16.0.0", "255.240.0.0") ||
@@ -52,3 +57,4 @@ function FindProxyForURL(url, host) {
   // Default rule: everything else goes direct
   return "DIRECT";
 }
+
