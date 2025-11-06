@@ -1,60 +1,67 @@
 function FindProxyForURL(url, host) {
   host = host.toLowerCase();
 
-  // Route ipchicken via proxy
-  if (dnsDomainIs(host, "ipchicken.com") || dnsDomainIs(host, "www.ipchicken.com")) {
-    return "SOCKS5 127.0.0.1:1080";
+  // ---- Sites that must use the proxy ----
+  if (dnsDomainIs(host, "ipchicken.com") || shExpMatch(host, "*.ipchicken.com")) {
+    return "SOCKS5 127.0.0.1:1080; DIRECT";
   }
 
-  // Route whatismyipaddress via proxy
-  if (dnsDomainIs(host, "whatismyipaddress.com") || dnsDomainIs(host, "www.whatismyipaddress.com")) {
-    return "SOCKS5 127.0.0.1:1080";
+  if (dnsDomainIs(host, "whatismyipaddress.com") || shExpMatch(host, "*.whatismyipaddress.com")) {
+    return "SOCKS5 127.0.0.1:1080; DIRECT";
   }
 
-  // Route reddit via proxy
-  if (dnsDomainIs(host, "reddit.com") || dnsDomainIs(host, "www.reddit.com")) {
-    return "SOCKS5 127.0.0.1:1080";
+  if (dnsDomainIs(host, "reddit.com") || shExpMatch(host, "*.reddit.com")) {
+    return "SOCKS5 127.0.0.1:1080; DIRECT";
   }
 
-  // Route zillow via proxy
-  if (dnsDomainIs(host, "zillow.com") || dnsDomainIs(host, "www.zillow.com")) {
-    return "SOCKS5 127.0.0.1:1080";
+  if (dnsDomainIs(host, "zillow.com") || shExpMatch(host, "*.zillow.com")) {
+    return "SOCKS5 127.0.0.1:1080; DIRECT";
   }
 
-  // Route realtor via proxy
-  if (dnsDomainIs(host, "realtor.com") || dnsDomainIs(host, "www.realtor.com")) {
-    return "SOCKS5 127.0.0.1:1080";
+  if (dnsDomainIs(host, "realtor.com") || shExpMatch(host, "*.realtor.com")) {
+    return "SOCKS5 127.0.0.1:1080; DIRECT";
   }
 
-  // Route bizjournals via proxy
-  if (dnsDomainIs(host, "bizjournals.com") || dnsDomainIs(host, "www.bizjournals.com")) {
-    return "SOCKS5 127.0.0.1:1080";
+  if (dnsDomainIs(host, "bizjournals.com") || shExpMatch(host, "*.bizjournals.com")) {
+    return "SOCKS5 127.0.0.1:1080; DIRECT";
   }
 
-  // Route NJ Courts via proxy
-  if (dnsDomainIs(host, "njcourts.gov") || dnsDomainIs(host, "www.njcourts.gov")) {
-    return "SOCKS5 127.0.0.1:1080";
+  if (dnsDomainIs(host, "njcourts.gov") || shExpMatch(host, "*.njcourts.gov")) {
+    return "SOCKS5 127.0.0.1:1080; DIRECT";
   }
 
-  // Route tylermecca site via proxy
-  if (dnsDomainIs(host, "tylermecca.foxroach.com") || dnsDomainIs(host, "www.tylermecca.foxroach.com")) {
-    return "SOCKS5 127.0.0.1:1080";
+  if (dnsDomainIs(host, "tylermecca.foxroach.com") || shExpMatch(host, "*.tylermecca.foxroach.com")) {
+    return "SOCKS5 127.0.0.1:1080; DIRECT";
   }
 
-  // Route zillow via proxy
-  if (dnsDomainIs(host, "cloudflare.com") || dnsDomainIs(host, "www.cloudflare.com")) {
-    return "SOCKS5 127.0.0.1:1080";
+  // ---- Cloudflare detection helper (official IPv4 ranges) ----
+  function isCloudflareIP(h) {
+    if (!isResolvable(h)) return false;
+    var ip = dnsResolve(h);
+    return (
+      isInNet(ip, "173.245.48.0",  "255.255.240.0")  || // /20
+      isInNet(ip, "103.21.244.0",  "255.255.252.0")  || // /22
+      isInNet(ip, "103.22.200.0",  "255.255.252.0")  || // /22
+      isInNet(ip, "103.31.4.0",    "255.255.252.0")  || // /22
+      isInNet(ip, "141.101.64.0",  "255.255.192.0")  || // /18
+      isInNet(ip, "108.162.192.0", "255.255.192.0")  || // /18
+      isInNet(ip, "190.93.240.0",  "255.255.240.0")  || // /20
+      isInNet(ip, "188.114.96.0",  "255.255.240.0")  || // /20
+      isInNet(ip, "197.234.240.0", "255.255.252.0")  || // /22
+      isInNet(ip, "198.41.128.0",  "255.255.128.0")  || // /17
+      isInNet(ip, "162.158.0.0",   "255.254.0.0")    || // /15
+      isInNet(ip, "104.16.0.0",    "255.248.0.0")    || // /13
+      isInNet(ip, "104.24.0.0",    "255.252.0.0")    || // /14
+      isInNet(ip, "172.64.0.0",    "255.248.0.0")    || // /13
+      isInNet(ip, "131.0.72.0",    "255.255.252.0")     // /22
+    );
   }
 
-  // Bypass proxy for Cloudflare-backed content (avoids captchas and 1020 errors)
-  if (isResolvable(host) &&
-      (isInNet(dnsResolve(host), "104.16.0.0", "255.240.0.0") ||
-       isInNet(dnsResolve(host), "172.64.0.0", "255.192.0.0") ||
-       isInNet(dnsResolve(host), "188.114.96.0", "255.255.240.0"))) {
-    return "DIRECT";
+  // ---- For Cloudflare-backed hosts: try proxy first, then direct ----
+  if (isCloudflareIP(host)) {
+    return "SOCKS5 127.0.0.1:1080; DIRECT";
   }
 
-  // Default rule: everything else goes direct
+  // ---- Default: everything else direct ----
   return "DIRECT";
 }
-
