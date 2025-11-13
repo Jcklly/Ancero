@@ -30,6 +30,10 @@ function FindProxyForURL(url, host) {
     return "SOCKS5 127.0.0.1:1080; DIRECT";
   }
 
+  if (dnsDomainIs(host, "dnb.com") || shExpMatch(host, "*.dnb.com")) {
+    return "SOCKS5 127.0.0.1:1080; DIRECT";
+  }
+
   if (dnsDomainIs(host, "tylermecca.foxroach.com") || shExpMatch(host, "*.tylermecca.foxroach.com")) {
     return "SOCKS5 127.0.0.1:1080; DIRECT";
   }
@@ -69,4 +73,5 @@ function FindProxyForURL(url, host) {
   // ---- Default: everything else direct ----
   return "DIRECT";
 }
+
 
